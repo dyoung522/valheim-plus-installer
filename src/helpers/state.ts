@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useReducer } from "react";
 
 const defaultState: IState = {
@@ -38,4 +39,4 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
   }
 }
 
-export default (config: any) => useReducer(reducer, defaultState, () => initialState(config));
+export default (config: IState) => useReducer(reducer, defaultState, () => initialState(config));

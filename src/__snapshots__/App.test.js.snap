@@ -116,7 +116,7 @@ exports[`renders without crashing 1`] = `
       <div
         class="MuiTypography-root makeStyles-footer-10 MuiTypography-body1"
       >
-        Version v.0.0.1
+        Version v.
       </div>
     </div>
   </div>

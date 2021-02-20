@@ -1,6 +1,10 @@
 module.exports = {
   /* your base configuration of choice */
-  extends: ["eslint:recommended", "plugin:react/recommended"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+  ],
 
   parser: "@typescript-eslint/parser",
   parserOptions: {

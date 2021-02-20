@@ -6,6 +6,9 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 const windowStateKeeper = require("electron-window-state");
 const unhandled = require("electron-unhandled");
+const Store = require("electron-store");
+
+Store.initRenderer();
 
 log.info("App starting");
 

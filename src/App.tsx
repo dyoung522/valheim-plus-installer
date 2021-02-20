@@ -1,3 +1,4 @@
+
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -41,7 +42,9 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignContent: "center"
+    alignContent: "center",
+    alignItems: "center",
+    borderBottom: "1px solid gray"
   },
   modeControl: {
     padding: theme.spacing(1)
@@ -71,6 +74,7 @@ const useStyles = makeStyles(theme => ({
 
 interface AppProps {
   state: IState;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any*/
   stateDispatch: (action: { type: string; payload?: any }) => IState;
 }
 
@@ -168,16 +172,17 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
     );
   }
 
-  const commands = {
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any*/
+  const template: any = menuTemplate({
     checkUpdates: {
       checkForUpdate: () => checkForUpdate(true),
       enabled: !(isDev || appUpdating)
     },
-    chooseGameFolder: getGameFolder
-  };
+    chooseGameFolder: getGameFolder,
+    isDev: isDev
+  });
 
-  // @ts-ignore
-  remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menuTemplate(commands)));
+  remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
   // Check for updates after launch
   if (!appUpdated && !appUpdating) {
@@ -193,25 +198,26 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
       <Box className={classes.mainContainer}>
         <Container maxWidth="xl" className={classes.bodyContainer}>
           <Box className={classes.controlsContainer}>
-            <Fab
-              variant="extended"
-              size="medium"
-              color="primary"
-              aria-label="Launch Valheim"
-              className={classes.launchButton}
-              onClick={launchGame}
-            >
-              <LaunchIcon className={classes.launchIcon} />
-              Play Game
-            </Fab>
-          </Box>
-          <List dense={true}>
             <FolderPicker
               folder={state.gameFolder}
               handleClick={getGameFolder}
               label="Game Folder"
               toolTip="Click to select Game Folder"
             />
+            <Fab
+              variant="extended"
+              size="large"
+              color="primary"
+              aria-label="Launch Valheim+"
+              className={classes.launchButton}
+              onClick={launchGame}
+            >
+              <LaunchIcon className={classes.launchIcon} />
+              Launch Valheim+
+            </Fab>
+          </Box>
+          <List dense={true}>
+            CFG editor goes here
           </List>
         </Container>
         <Box className={classes.footerContainer}>
