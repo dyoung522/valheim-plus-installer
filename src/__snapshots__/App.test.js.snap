@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root MuiBox-root-11 makeStyles-mainContainer-1"
+  >
+    <div
+      class="MuiContainer-root makeStyles-bodyContainer-2 MuiContainer-maxWidthXl"
+    >
+      <div
+        class="MuiBox-root MuiBox-root-12 makeStyles-controlsContainer-4"
+      >
+        <button
+          aria-label="Launch Valheim"
+          class="MuiButtonBase-root MuiFab-root makeStyles-launchButton-8 MuiFab-extended MuiFab-sizeMedium MuiFab-primary"
+          tabindex="0"
+          type="button"
+        >
+          <span
+            class="MuiFab-label"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root makeStyles-launchIcon-9"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+              />
+            </svg>
+            Play Game
+          </span>
+          <span
+            class="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+      <ul
+        class="MuiList-root MuiList-dense MuiList-padding"
+      >
+        <li
+          class="MuiListItem-root makeStyles-listItem-13 MuiListItem-dense MuiListItem-gutters"
+          color="secondary"
+          title="Click to select Game Folder"
+        >
+          <div
+            class="MuiListItemIcon-root"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+              />
+            </svg>
+          </div>
+          <div
+            class="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline"
+          >
+            <span
+              class="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+            >
+              Game Folder
+            </span>
+            <p
+              class="MuiTypography-root MuiListItemText-secondary MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            >
+              /foo/bar
+            </p>
+          </div>
+          <div
+            class="MuiListItemIcon-root"
+            style="margin-left: auto;"
+          >
+            <button
+              aria-label="open-folder"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall"
+              tabindex="0"
+              type="button"
+            >
+              <span
+                class="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div
+      class="MuiBox-root MuiBox-root-14 makeStyles-footerContainer-3"
+    >
+      <div
+        class="MuiTypography-root makeStyles-footer-10 MuiTypography-body1"
+      >
+        Valheim+ Installer TEST
+      </div>
+      <div
+        class="MuiTypography-root makeStyles-footer-10 MuiTypography-body1"
+      >
+        Version v.0.0.1
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

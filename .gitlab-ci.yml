@@ -1,0 +1,47 @@
+image: node:12
+
+include:
+  template: Jobs/Code-Quality.gitlab-ci.yml
+
+variables:
+  GIT_LFS_SKIP_SMUDGE: "1"
+  NODE_ENV: development
+  NODE_PATH: .
+
+cache:
+  untracked: true
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - node_modules/
+
+stages:
+  - setup
+  - test
+  - build
+
+setup:
+  stage: setup
+  script:
+    - npm install
+
+lint:
+  stage: test
+  script:
+    - npm lint
+
+test:
+  stage: test
+  script:
+    - npm test
+
+build:
+  stage: build
+  image: slauta93/electron-builder-win
+  only:
+    - master
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/dist/*.*
+  script:
+    - sed -r -i "/\"version\":/s/([[:digit:]]+.[[:digit:]]+.[[:digit:]]+)/\1.${CI_PIPELINE_ID}/" package.json
+    - npm dist

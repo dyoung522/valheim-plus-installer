@@ -1,0 +1,151 @@
+{
+  "version": "0.0.1",
+  "name": "valheim-plus-installer",
+  "productName": "Valheim Plus Installer",
+  "description": "Valheim Plus Installer",
+  "copyright": "",
+  "main": "public/electron.js",
+  "repository": "https://github.com/dyoung522/valheim-plus-installer",
+  "homepage": "./",
+  "keywords": [
+    "valheim",
+    "plus",
+    "valheim+",
+    "valheimplus"
+  ],
+  "private": true,
+  "author": {
+    "name": "Donovan C. Young",
+    "email": "Donovan.C.Young@gmail.com",
+    "url": "https://donovanyoung.com"
+  },
+  "build": {
+    "appId": "com.valheimplus.installer",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://github.com"
+      }
+    ],
+    "win": {
+      "publish": [
+        "github"
+      ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "verifyUpdateCodeSignature": false
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "build"
+    }
+  },
+  "scripts": {
+    "dev": "concurrently -k \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron --inspect .\"",
+    "start": "rescripts start",
+    "build": "rescripts build",
+    "test": "react-scripts test --modulePaths=src",
+    "test-coverage": "react-scripts test --modulePaths=src --coverage",
+    "dist": "yarn build; electron-builder -w",
+    "pack": "electron-builder -w --dir",
+    "release": "yarn build; electron-builder -w -p 'onTagOrDraft'",
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "lint": "eslint src --ext .ts --ext .tsx"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "quokka": {
+    "env": {
+      "params": {
+        "env": "NODE_PATH=./src"
+      }
+    },
+    "babel": {
+      "ts": true,
+      "presets": [
+        "react-app"
+      ]
+    },
+    "plugins": [
+      "jsdom-quokka-plugin"
+    ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^@src/(.*)$": "<rootDir>/src/$1"
+    }
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.5.1",
+    "@material-ui/icons": "^4.5.1",
+    "electron-debug": "^3.0.1",
+    "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.0.4",
+    "electron-store": "^5.1.0",
+    "electron-unhandled": "^3.0.1",
+    "electron-updater": "^4.2.0",
+    "electron-util": "^0.13.0",
+    "electron-window-state": "^5.0.3",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
+    "react-jss": "^10.0.0"
+  },
+  "devDependencies": {
+    "@hot-loader/react-dom": "^16.11.0",
+    "@rescripts/cli": "^0.0.13",
+    "@rescripts/rescript-env": "^0.0.11",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@types/jest": "^24.0.23",
+    "@types/mock-fs": "^4.10.0",
+    "@types/node": "^12.12.15",
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
+    "@types/xml2js": "^0.4.5",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "concurrently": "^5.0.0",
+    "cross-env": "^6.0.3",
+    "electron": "^11.2.3",
+    "electron-builder": "^22.9.1",
+    "eslint": "^6.7.2",
+    "jest": "^24.9.0",
+    "react-app-rewire-hot-loader": "^2.0.1",
+    "react-app-rewired": "^2.1.5",
+    "react-hot-loader": "^4.12.18",
+    "react-scripts": "3.4.1",
+    "react-test-renderer": "^16.12.0",
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2",
+    "wait-on": "^3.3.0",
+    "whatwg-fetch": "^3.0.0"
+  }
+}
