@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "name": "valheim-plus-installer",
   "productName": "Valheim Plus Installer",
   "description": "Valheim Plus Installer",
@@ -27,7 +27,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://github.com"
+        "url": "https://github.com/dyoung522/valheim-plus-installer"
       }
     ],
     "win": {
@@ -105,7 +105,10 @@
   "dependencies": {
     "@material-ui/core": "^4.5.1",
     "@material-ui/icons": "^4.5.1",
+    "@octokit/rest": "^18.2.0",
+    "decompress-zip": "^0.3.3",
     "electron-debug": "^3.0.1",
+    "electron-dl": "^3.1.0",
     "electron-is-dev": "^1.2.0",
     "electron-log": "^4.0.4",
     "electron-store": "^7.0.2",

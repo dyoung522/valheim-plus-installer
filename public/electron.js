@@ -1,4 +1,5 @@
-const { app, BrowserWindow, dialog, ipcMain } = require("electron");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const { app, BrowserWindow, dialog, ipcMain, session } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const grey = require("@material-ui/core/colors/grey");
 const log = require("electron-log");
@@ -7,11 +8,13 @@ const isDev = require("electron-is-dev");
 const windowStateKeeper = require("electron-window-state");
 const unhandled = require("electron-unhandled");
 const Store = require("electron-store");
+const electronDl = require('electron-dl');
 
 Store.initRenderer();
 
 log.info("App starting");
 
+electronDl();
 unhandled();
 
 let mainWindow;
@@ -33,10 +36,24 @@ function createWindow() {
     backgroundColor: grey[300],
     useContentSize: false,
     webPreferences: {
+      contextIsolation: false,
       nodeIntegration: true,
       enableRemoteModule: true
     }
   });
+
+ // session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+ //   callback({
+ //     responseHeaders: {
+ //       ...details.responseHeaders,
+ //       "Content-Security-Policy": [
+ //         "style-src 'unsafe-inline'",
+ //         "script-src 'unsafe-eval'",
+ //         "default-src 'self'",
+ //       ]
+ //     }
+ //   })
+ // });
 
   state.manage(mainWindow);
 
@@ -50,6 +67,13 @@ function createWindow() {
     // DO NOT USE: BrowserWindow.addDevToolsExtension(path.join(__dirname, "../node_modules/electron-react-devtools"));
     mainWindow.webContents.openDevTools();
   }
+
+  ipcMain.on("download", (event, info) => {
+    info.properties.onProgress = status => mainWindow.webContents.send("download progress", status);
+    electronDl.download(BrowserWindow.getFocusedWindow(), info.url, info.properties)
+      .then(dl => mainWindow.webContents.send("download complete", dl.getSavePath()))
+      .catch(error => mainWindow.webContents.send("download error", error))
+  });
 
   mainWindow.on("closed", () => (mainWindow = null));
 }

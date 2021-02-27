@@ -2,6 +2,8 @@ export default {
   get: jest.fn(),
   set: jest.fn(),
   store: {
-    gameFolder: "C:\\Steam\\SteamLibrary\\steamapps\\common\\Valheim"
+    gameFolder: "S:\\Games\\Steam\\steamapps\\common\\Valheim",
+    releaseID: 10001,
+    releaseTag: "Test"
   }
 };
