@@ -13,6 +13,7 @@
 /builds
 /stash
 /private
+/dist
 
 # misc
 .DS_Store

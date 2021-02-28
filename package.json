@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "valheim-plus-installer",
   "productName": "Valheim Plus Installer",
   "description": "Valheim Plus Installer",
@@ -26,8 +26,7 @@
     },
     "publish": [
       {
-        "provider": "generic",
-        "url": "https://github.com/dyoung522/valheim-plus-installer"
+        "provider": "github"
       }
     ],
     "win": {
