@@ -5,6 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Fab from "@material-ui/core/Fab";
 import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import LaunchIcon from "@material-ui/icons/Launch";
+import SaveIcon from "@material-ui/icons/Save";
 import { execFile } from "child_process";
 import FolderPicker from "components/FolderPicker";
 import Installer from "components/Installer";
@@ -15,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import menuTemplate from "./menu";
 import Typography from "@material-ui/core/Typography";
-import { fileExists, getSteamFolder, getVersion, readSem } from "helpers";
+import { ConfigFile, fileExists, getSteamFolder, getVersion, readSem, saveConfig } from "helpers";
 import isDev from "electron-is-dev";
 import ConfigEditor from "components/ConfigEditor";
 import LoadingPage from "components/LoadingPage";
@@ -71,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
   launchButton: {
     margin: theme.spacing(1),
+    width: 250,
   },
   launchIcon: {
     marginRight: theme.spacing(1),
@@ -119,15 +121,57 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
   };
 
   const launchGame = () => {
-    const game = path.normalize(path.join(state.gameFolder, gameExecutable));
+    if (state.configDirty) {
+      saveConfig(state, stateDispatch);
+    } else {
+      if (state.gameFolder) {
+        const game = path.normalize(path.join(state.gameFolder, gameExecutable));
 
-    if (fileExists(game))
-      execFile(game, (err) => {
-        if (err) {
-          errorDialog("Unable to start ${gameLabel}", err);
-          return;
+        if (fileExists(game)) {
+          execFile(game, (err) => {
+            if (err) {
+              errorDialog(`Unable to start ${gameLabel}`, err);
+              return;
+            }
+          });
         }
-      });
+      }
+    }
+  };
+
+  const checkGameFolder = async (): Promise<void> => {
+    setLoading(true);
+    if (!state.gameFolder || !fileExists(state.gameFolder)) {
+      await getSteamFolder()
+        .then((folder) => stateDispatch({ type: "setGameFolder", payload: folder }))
+        .catch((err) => console.error(err));
+    }
+    setLoading(false);
+  };
+
+  const getConfigCurrent = async () => {
+    if (state.modDir.config && fileExists(state.modDir.config)) {
+      const configData = await new ConfigFile(state.modDir.config).data();
+      stateDispatch({ type: "setConfigCurrent", payload: configData });
+    }
+  };
+
+  const getGameInfo = async () => {
+    setLoading(true);
+    if (state.gameFolder && fileExists(state.gameFolder) && state.modDir.dll && state.modDir.config) {
+      console.info("loading mod data");
+      if (fileExists(state.modDir.dll) && fileExists(state.modDir.config)) {
+        setLoading(true);
+        readSem(state, stateDispatch);
+
+        await getVersion(state.modDir.dll)
+          .then((version) => stateDispatch({ type: "updateCurrentTag", payload: version }))
+          .catch((error) => stateDispatch({ type: "gotError", payload: error.toString() }));
+
+        stateDispatch({ type: "modInstalled" });
+      }
+    }
+    setLoading(false);
   };
 
   const getFolder = async (title: string) => {
@@ -143,56 +187,46 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
   };
 
   const getGameFolder = () => {
-    getFolder(`Please select the ${gameLabel} game folder`).then((newFolder) => {
-      if (newFolder) {
-        if (fileExists(path.join(newFolder, gameExecutable))) {
-          stateDispatch({ type: "setGameFolder", payload: newFolder });
-        } else {
-          errorDialog("Invalid Game Folder", new Error(`The chosen folder is not a valid ${gameLabel} game folder`));
+    getFolder(`Please select the ${gameLabel} game folder`)
+      .then((newFolder) => {
+        if (newFolder) {
+          if (fileExists(path.join(newFolder, gameExecutable))) {
+            stateDispatch({ type: "setGameFolder", payload: newFolder });
+            setModInstalled(false);
+          } else {
+            errorDialog("Invalid Game Folder", new Error(`The chosen folder is not a valid ${gameLabel} game folder`));
+          }
         }
-      }
     });
   };
 
-  // This only runs once
+  // Runs when the gameFolder changes or a new version is installed
   useEffect(() => {
-    if (!fileExists(state.gameFolder)) {
-      setLoading(true);
+    checkGameFolder();
+    getGameInfo();
+  }, [state.installComplete, state.gameFolder]);
 
-      getSteamFolder()
-        .then((folder) => {
-          stateDispatch({ type: "setGameFolder", payload: folder });
-        })
-        .catch((err) => {
-          console.error(err);
-          // getGameFolder();
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, []);
-
+  // Only runs when the gameFolder changes (i.e. on start or when a new folder is chosen)
   useEffect(() => {
-    if (state.gameFolder && fileExists(state.gameFolder)) {
-      const dllFile = path.join(state.gameFolder, "BepInEx", "plugins", "ValheimPlus.dll");
+    getConfigCurrent();
+  }, [state.gameFolder]);
 
-      if (fileExists(dllFile)) {
-        (async () => {
-          setLoading(true);
-          readSem(state, stateDispatch);
-          await getVersion(dllFile)
-            .then((version) => stateDispatch({ type: "updateCurrentTag", payload: version }))
-            .catch((error) => stateDispatch({ type: "gotError", payload: error.toString() }));
-          stateDispatch({ type: "modInstalled" });
-          setLoading(false);
-        })();
-      }
+  // Check for updates after launch
+  useEffect(() => {
+    if (!appUpdated && !appUpdating) {
+      setTimeout(() => {
+        try {
+          checkForUpdate();
+          setAppUpdated(true);
+        } catch {
+          stateDispatch({ type: "gotError", payload: `Unable to auto-update ${gameLabel} installer` });
+        }
+      }, 5000);
     }
-  }, [state.gameFolder, state.installed, state.releaseID]);
+  }, [appUpdated, appUpdating])
 
   if (loading) {
-    pageRender = <LoadingPage />
+    pageRender = <LoadingPage />;
   } else {
     if (state.config === undefined || !state.gameFolder) {
       pageRender = (
@@ -229,24 +263,31 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
 
   remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
-  // Check for updates after launch
-  if (!appUpdated && !appUpdating) {
-    setTimeout(() => {
-      try {
-        checkForUpdate();
-        setAppUpdated(true);
-      } catch {
-        stateDispatch({ type: "gotError", payload: `Unable to auto-update ${gameLabel} installer` });
-      }
-    }, 5000);
-  }
 
   if (!pageRender) {
+    let launchButton: JSX.Element;
+
+    if (state.configDirty) {
+      launchButton = (
+        <>
+          <SaveIcon className={classes.launchIcon} />
+          Save CFG
+        </>
+      )
+    } else {
+      launchButton = (
+        <>
+          <LaunchIcon className={classes.launchIcon} />
+          Launch {gameLabel}
+        </>
+      )
+    }
+
     pageRender = (
       <React.Fragment>
         <Box boxShadow={1} className={classes.controlsContainer}>
           <FolderPicker
-            folder={state.gameFolder}
+            folder={state.gameFolder || ""}
             handleClick={getGameFolder}
             label="Game Folder"
             toolTip="Click to select Game Folder"
@@ -260,8 +301,7 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
               className={classes.launchButton}
               onClick={launchGame}
             >
-              <LaunchIcon className={classes.launchIcon} />
-              Launch {gameLabel}
+              {launchButton}
             </Fab>
           )}
         </Box>

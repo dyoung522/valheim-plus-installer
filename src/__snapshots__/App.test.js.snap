@@ -8,29 +8,87 @@ exports[`renders without crashing 1`] = `
     <div
       class="MuiContainer-root makeStyles-bodyContainer-2 MuiContainer-maxWidthXl"
     >
-      <h5
-        class="MuiTypography-root makeStyles-loadingText-21 MuiTypography-h5"
-      >
-        Loading... Please wait
-      </h5>
       <div
-        class="MuiCircularProgress-root makeStyles-loadingIcon-22 MuiCircularProgress-colorSecondary MuiCircularProgress-indeterminate"
-        role="progressbar"
-        style="width: 40px; height: 40px;"
+        class="MuiBox-root MuiBox-root-13 makeStyles-controlsContainer-4"
       >
-        <svg
-          class="MuiCircularProgress-svg"
-          viewBox="22 22 44 44"
+        <li
+          class="MuiListItem-root makeStyles-listItem-14 MuiListItem-gutters"
+          color="secondary"
+          title="Click to select Game Folder"
         >
-          <circle
-            class="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate"
-            cx="44"
-            cy="44"
-            fill="none"
-            r="20.2"
-            stroke-width="3.6"
-          />
-        </svg>
+          <div
+            class="MuiListItemIcon-root"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+              />
+            </svg>
+          </div>
+          <div
+            class="MuiListItemText-root MuiListItemText-multiline"
+          >
+            <span
+              class="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+            >
+              Game Folder
+            </span>
+            <p
+              class="MuiTypography-root MuiListItemText-secondary MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            >
+              /foo/bar
+            </p>
+          </div>
+        </li>
+      </div>
+      <div
+        class="MuiBox-root MuiBox-root-16 makeStyles-logWindow-15"
+      >
+        <div
+          class="MuiBox-root MuiBox-root-17"
+        >
+          Install Log
+        </div>
+        <ul
+          class="MuiList-root MuiList-padding"
+        >
+          <li
+            class="MuiListItem-root MuiListItem-gutters"
+          >
+            <div
+              class="MuiListItemText-root"
+            >
+              <span
+                class="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+              >
+                Welcome to the Valheim+ Installer
+              </span>
+            </div>
+          </li>
+        </ul>
+        <div
+          class="MuiBox-root MuiBox-root-18"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+            tabindex="0"
+            type="button"
+          >
+            <span
+              class="MuiButton-label"
+            >
+              OK
+            </span>
+            <span
+              class="MuiTouchRipple-root"
+            />
+          </button>
+        </div>
       </div>
     </div>
     <div
