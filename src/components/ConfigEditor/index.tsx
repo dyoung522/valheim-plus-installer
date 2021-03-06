@@ -1,7 +1,10 @@
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
-import Card from "@material-ui/core/Card";
-import Typography from "@material-ui/core/Typography";
+import PropTypes from "prop-types";
+import Box from "@material-ui/core/Box";
+import { ConfigFile, fileExists } from "helpers";
+import LoadingPage from "components/LoadingPage";
+import ConfigSection from "components/ConfigSection";
 
 interface ConfigEditorProps {
   state: IState;
@@ -9,6 +12,10 @@ interface ConfigEditorProps {
 }
 
 const useStyles = makeStyles((theme) => ({
+  configContainer: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
   card: {
     display: "flex",
     flexFlow: "row wrap",
@@ -27,13 +34,83 @@ const useStyles = makeStyles((theme) => ({
 function ConfigEditor(props: ConfigEditorProps): React.ReactElement {
   const { state, stateDispatch } = props;
   const classes = useStyles();
+  const [configNew, setConfigNew] = useState(new Map());
+  const [loading, setLoading] = useState(true);
 
-  return (
-    <Card className={classes.card}>
-      <Typography variant="h4">CFG Editor Coming Soon</Typography>
-      <Typography className={classes.quitMessage}>You can now safely close this application</Typography>
-    </Card>
-  );
+  const updateConfig = () => stateDispatch({ type: "setConfigNew", payload: configNew });
+
+  if (state.modDir.config && !fileExists(state.modDir.config)) {
+    throw new Error("Config does not exist");
+  }
+
+  const configFile = new ConfigFile(state.modDir.config || "");
+
+  useEffect(() => {
+    (async () => {
+      const data = await configFile.data();
+      setConfigNew(data);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (configNew.size) {
+      // TODO highlight entries that exist in the new config but not the old one
+      Array.from(configNew.keys()).forEach((section: string) => {
+        const currentSection: Map<string, IConfigOption> | undefined = configNew.get(section);
+        const previousSection: Map<string, IConfigOption> | undefined = state.configCurrent.get(section);
+
+        if (previousSection) {
+          if (currentSection) {
+            Array.from(currentSection.keys()).forEach((option: string) => {
+              const currentOption: IConfigOption | undefined = currentSection.get(option);
+              const previousOption: IConfigOption | undefined = state.configCurrent.get(section)?.get(option);
+
+              if (previousOption) {
+                if (currentOption && previousOption.value !== currentOption.value) {
+                  currentOption.value = previousOption.value;
+                  configNew.get(section)?.set(option, currentOption);
+                  stateDispatch({ type: "setConfigDirty", payload: true });
+                }
+              } else {
+                // New option in current section
+              }
+            });
+          }
+        } else {
+          // Completely new section
+        }
+      });
+      updateConfig();
+      setLoading(false);
+    }
+  }, [configNew]);
+
+  if (loading) {
+    return <LoadingPage />;
+  } else {
+    const configSections = Array.from(configNew.keys()).map((section) => {
+      if (section == "defaults") {
+        return;
+      }
+
+      return (
+        <ConfigSection
+          key={section}
+          configData={configNew.get(section) || new Map()}
+          section={section}
+          state={state}
+          stateDispatch={stateDispatch}
+          updateConfig={updateConfig} />
+      )
+    });
+
+    return <Box className={classes.configContainer}>{configSections}</Box>;
+  }
 }
+
+ConfigEditor.propTypes = {
+  state: PropTypes.object.isRequired,
+  stateDispatch: PropTypes.func.isRequired,
+};
 
 export default ConfigEditor;

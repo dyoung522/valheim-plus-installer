@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function (owner: string, repo: string, state: IState, stateDispatch: StateDispatch): Promise<any> {
   const octokit = new Octokit();
 
