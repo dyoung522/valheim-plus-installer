@@ -92,6 +92,7 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
         currentID: defaultState.currentID,
         currentTag: defaultState.currentTag,
         gameFolder: action.payload,
+        installComplete: false,
         installed: false,
         modDir: setModDir(action.payload)
       };
@@ -101,6 +102,7 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
       return {
         ...state,
         gameFolder: "",
+        installComplete: false,
         installed: false,
         modDir: setModDir(undefined)
       };

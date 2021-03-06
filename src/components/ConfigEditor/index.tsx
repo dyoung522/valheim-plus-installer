@@ -69,7 +69,9 @@ function ConfigEditor(props: ConfigEditorProps): React.ReactElement {
                 if (currentOption && previousOption.value !== currentOption.value) {
                   currentOption.value = previousOption.value;
                   configNew.get(section)?.set(option, currentOption);
-                  stateDispatch({ type: "setConfigDirty", payload: true });
+                  if (!state.configDirty) {
+                    stateDispatch({ type: "setConfigDirty", payload: true });
+                  }
                 }
               } else {
                 // New option in current section

@@ -150,7 +150,7 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
   };
 
   const getConfigCurrent = async () => {
-    if (state.modDir.config) {
+    if (state.modDir.config && fileExists(state.modDir.config)) {
       const configData = await new ConfigFile(state.modDir.config).data();
       stateDispatch({ type: "setConfigCurrent", payload: configData });
     }
