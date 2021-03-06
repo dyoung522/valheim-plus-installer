@@ -1,23 +1,46 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useReducer } from "react";
+import { fileExists } from "helpers";
+import path from "path";
 
 const defaultState: IState = {
   config: null,
+  configCurrent: new Map(),
+  configDirty: false,
+  configNew: new Map(),
   currentID: 0,
   currentTag: "Not Installed",
   downloadComplete: false,
   downloadPercent: 0.0,
   downloadClientFilename: "WindowsClient.zip",
   error: "",
-  gameFolder: "",
+  gameFolder: undefined,
   installComplete: false,
   installed: false,
+  modDir: { base: undefined, config: undefined, dll: undefined },
   releaseID: 0,
   releasePath: "",
-  releaseTag: ""
+  releaseTag: "",
 };
 
+function setModDir(baseDir: string | undefined): IModDirs {
+  if (baseDir && fileExists(baseDir)) {
+    const modDir = path.join(baseDir, "BepInEx");
+
+    return {
+      base: modDir,
+      config: path.join(modDir, 'config', "valheim_plus.cfg"),
+      dll: path.join(modDir, "plugins", "ValheimPlus.dll")
+    }
+  } else {
+    return { base: undefined, config: undefined, dll: undefined }
+  }
+}
+
 function initialState(config: any): IState {
+  const configCurrent = defaultState.configCurrent;
+  const configDirty = defaultState.configDirty;
+  const configNew = defaultState.configNew;
   const currentID = defaultState.currentID;
   const currentTag = defaultState.currentTag;
   const downloadClientFilename = defaultState.downloadClientFilename;
@@ -27,12 +50,20 @@ function initialState(config: any): IState {
   const installComplete = defaultState.installComplete;
   const installed = defaultState.installed;
   const gameFolder = config.get("gameFolder");
+  let modDir = defaultState.modDir;
   const releaseID = config.get("releaseID") || defaultState.releaseID;
   const releasePath = defaultState.releasePath;
   const releaseTag = config.get("releaseTag") || defaultState.releaseTag;
 
+  if (gameFolder) {
+    modDir = setModDir(gameFolder);
+  }
+
   return {
     config,
+    configCurrent,
+    configDirty,
+    configNew,
     currentID,
     currentTag,
     downloadClientFilename,
@@ -42,6 +73,7 @@ function initialState(config: any): IState {
     installComplete,
     installed,
     gameFolder,
+    modDir,
     releaseID,
     releasePath,
     releaseTag
@@ -57,10 +89,11 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
 
       return {
         ...state,
-        gameFolder: action.payload,
         currentID: defaultState.currentID,
         currentTag: defaultState.currentTag,
-        installed: false
+        gameFolder: action.payload,
+        installed: false,
+        modDir: setModDir(action.payload)
       };
     }
 
@@ -68,7 +101,8 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
       return {
         ...state,
         gameFolder: "",
-        installed: false
+        installed: false,
+        modDir: setModDir(undefined)
       };
 
     case "updateRelease": {
@@ -120,6 +154,25 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
         ...state,
         installComplete: true,
         installed: true
+      }
+
+    case "setConfigCurrent":
+      return {
+        ...state,
+        configCurrent: action.payload,
+        configDirty: false,
+      }
+
+    case "setConfigDirty":
+      return {
+        ...state,
+        configDirty: action.payload
+      }
+
+    case "setConfigNew":
+      return {
+        ...state,
+        configNew: action.payload
       }
 
     case "gotError": {

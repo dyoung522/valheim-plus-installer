@@ -1,10 +1,11 @@
+/* eslint-disable */
+// @ts-ignore
 import path from "path";
 import { aboutMenuItem } from "electron-util";
 import { shell } from "electron";
 
 const iconPath = path.join("public", "favicon.ico");
-const homePage = "https://github.com/dyoung522/valheim-plus-installer";
-const wikiPage = homePage + "/wiki";
+const homePage = "https://github.com/valheimPlus/ValheimPlus";
 const template = commands => [
   {
     label: "File",
@@ -34,16 +35,16 @@ const template = commands => [
       aboutMenuItem({
         icon: iconPath,
         copyright: "Donovan C. Young",
-        text: `Thanks for using the Valheim+ Installer.\n\nFor more information, please visit us at ${homePage}`
+        text: "Thanks for using the Valheim+ Installer and CFG editor."
       }),
       {
         label: "Learn More",
         click: async () => {
-          await shell.openExternal(wikiPage);
+          await shell.openExternal(homePage);
         }
       },
       {
-        label: "Check for Updates",
+        label: "Check for App Updates",
         click: commands.checkUpdates.checkForUpdate,
         enabled: commands.checkUpdates.enabled
       }

@@ -4,7 +4,7 @@ import { ipcRenderer } from "electron";
 import { fileExists } from "helpers";
 import { remote } from "electron";
 
-function unzip(filename: string, state: IState, stateDispatch: StateDispatch): Promise<string | null> {
+function unzip(filename: string, state: IState): Promise<string | null> {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const DecompressZip = require("decompress-zip");
   const unzipper = new DecompressZip(filename)
@@ -49,7 +49,7 @@ export default function (state: IState, stateDispatch: StateDispatch): void {
     stateDispatch({ type: "downloadComplete", payload: file });
 
     // do install here
-    unzip(file, state, stateDispatch)
+    unzip(file, state)
       .then(() => { stateDispatch({ type: "installComplete" }) })
       .catch((err) => { stateDispatch({ type: "gotError", payload: err }) });
   })

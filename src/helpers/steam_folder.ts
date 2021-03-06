@@ -1,6 +1,5 @@
 import path from "path";
 import { spawn } from "child_process";
-import { remote } from "electron";
 import { fileExists } from "helpers";
 
 export default function (): Promise<string> {
