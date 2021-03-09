@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Box from "@material-ui/core/Box";
-import { ConfigFile, fileExists } from "helpers";
+import { ConfigFile, fileExists, saveConfig } from "helpers";
 import LoadingPage from "components/LoadingPage";
 import ConfigSection from "components/ConfigSection";
 
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 function ConfigEditor(props: ConfigEditorProps): React.ReactElement {
   const { state, stateDispatch } = props;
   const classes = useStyles();
+  const [autoSave, setAutoSave] = useState(false);
   const [configNew, setConfigNew] = useState(new Map());
   const [loading, setLoading] = useState(true);
 
@@ -71,8 +72,9 @@ function ConfigEditor(props: ConfigEditorProps): React.ReactElement {
                   configNew.get(section)?.set(option, currentOption);
                   if (!state.configDirty) {
                     stateDispatch({ type: "setConfigDirty", payload: true });
+                    setAutoSave(true);
                   }
-                }
+              }
               } else {
                 // New option in current section
               }
@@ -86,6 +88,13 @@ function ConfigEditor(props: ConfigEditorProps): React.ReactElement {
       setLoading(false);
     }
   }, [configNew]);
+
+  useEffect(() => {
+    if (state.configDirty && autoSave) {
+      saveConfig(state, stateDispatch);
+      setAutoSave(false);
+    }
+  }, [autoSave, state.configNew, state.configDirty]);
 
   if (loading) {
     return <LoadingPage />;
