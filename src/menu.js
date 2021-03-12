@@ -4,13 +4,14 @@ import path from "path";
 import { aboutMenuItem } from "electron-util";
 import { shell } from "electron";
 
-const iconPath = path.join("public", "favicon.ico");
+const iconPath = path.join("public", "icon.png");
 const homePage = "https://github.com/valheimPlus/ValheimPlus";
 const template = commands => [
   {
     label: "File",
     submenu: [
       { label: "Choose Game Folder", accelerator: "CmdOrCtrl+Shift+G", click: commands.chooseGameFolder },
+      { label: "Check for V+ Updates", accelerator: "CmdOrCtrl+Shift+U", click: commands.checkForModUpdate },
       { type: "separator" },
       { role: "quit" }
     ]
