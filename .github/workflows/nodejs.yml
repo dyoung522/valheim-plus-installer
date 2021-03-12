@@ -18,7 +18,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: install, build, and test
         run: |
-          yarn
+          yarn install --network-timeout 100000
           yarn test
         env:
           CI: true
