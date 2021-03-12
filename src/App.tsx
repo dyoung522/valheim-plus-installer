@@ -100,6 +100,13 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
   let pageRender = null;
 
   const confirmInstallation = () => setModInstalled(true);
+  const checkForModUpdate = (() => {
+    if (!loading) {
+      stateDispatch({ type: "forceUpdate" });
+      setModInstalled(false);
+      getGameInfo();
+    }
+  });
 
   const checkForUpdate = (fromMenu?: boolean) => {
     ipcRenderer.on("updateComplete", () => {
@@ -258,6 +265,7 @@ function App({ state, stateDispatch }: AppProps): React.ReactElement {
       enabled: !(isDev || appUpdating),
     },
     chooseGameFolder: getGameFolder,
+    checkForModUpdate: checkForModUpdate,
     isDev: isDev,
   });
 

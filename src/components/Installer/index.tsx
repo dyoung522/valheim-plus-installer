@@ -8,7 +8,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import getReleaseInfo from "helpers/release_info";
 import { doInstall, writeSem } from "helpers";
-import LoadingPage from "components/LoadingPage";
 
 interface InstallerProps {
   state: IState;
@@ -29,7 +28,7 @@ function Installer(props: InstallerProps): React.ReactElement {
   const { state, stateDispatch, confirmInstallation } = props;
   const classes = useStyles();
   const [messageLog, setMessageLog] = useState(["Welcome to the Valheim+ Installer"]);
-  const [loading, setLoading] = useState(false);
+  const [installing, setInstalling] = useState(false);
   const [update, setUpdate] = useState("unknown");
 
   const addMessageLog = (log: string) => messageLog.push(log);
@@ -47,10 +46,10 @@ function Installer(props: InstallerProps): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!loading && state.releaseID === state.currentID && update != "complete") {
+    if (state.releaseID === state.currentID && update != "complete") {
       confirmInstallation();
     }
-  }, [loading, update, state.releaseID, state.currentID]);
+  }, [update, state.releaseID, state.currentID]);
 
   useEffect(() => {
     if (state.installComplete) {
@@ -88,12 +87,14 @@ function Installer(props: InstallerProps): React.ReactElement {
       writeSem(state, stateDispatch);
       addMessageLog("Installation Complete");
       setUpdate("complete");
+      setInstalling(false);
     }
   }, [state.installComplete]);
 
   const updateHandler = () => {
     if (haveRelease) {
       addMessageLog(`Installing Valheim+ v.${state.releaseTag}...`);
+      setInstalling(true);
       doInstall(state, stateDispatch);
     }
   };
@@ -102,7 +103,7 @@ function Installer(props: InstallerProps): React.ReactElement {
     if (update == "ready") {
       return (
         <ButtonGroup variant="contained">
-          <Button variant="contained" color="primary" onClick={updateHandler}>
+          <Button variant="contained" color="primary" onClick={updateHandler} disabled={installing}>
             Install
           </Button>
           {state.installed && (
@@ -128,21 +129,17 @@ function Installer(props: InstallerProps): React.ReactElement {
     </ListItem>
   ));
 
-  if (loading) {
-    return <LoadingPage />
-  } else {
-    return (
-      <Box boxShadow={1} className={classes.logWindow}>
-        <Box fontWeight="fontWeightBold" fontSize={16}>
-          Install Log
-        </Box>
-        <List>{log}</List>
-        <Box>
-          {button(update)}
-        </Box>
+  return (
+    <Box boxShadow={1} className={classes.logWindow}>
+      <Box fontWeight="fontWeightBold" fontSize={16}>
+        Install Log
       </Box>
-    )
-  }
+      <List>{log}</List>
+      <Box>
+        {button(update)}
+      </Box>
+    </Box>
+  )
 }
 
 export default Installer;

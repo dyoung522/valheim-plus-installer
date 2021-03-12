@@ -139,6 +139,14 @@ function reducer(state: IState, action: { type: string; payload?: any }): IState
         installed: true
       }
 
+    case "forceUpdate":
+      return {
+        ...state,
+        currentID: defaultState.currentID,
+        currentTag: defaultState.currentTag,
+        installComplete: false
+      }
+
     case "downloadComplete":
       return {
         ...state,
